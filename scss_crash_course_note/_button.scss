@@ -1,0 +1,26 @@
+//inhertance
+
+%btn { //shared between buttons
+    display:inline-block;
+    border-radius:5px;
+    padding: 8px 20px;
+    margin: 3px;
+
+    &:hover {
+        transform: scale(.98)
+    }
+}
+
+.btn-primary {
+    @extend %btn; //继承
+    @include set-background(lighten($primary-color,10%));
+    //调用了mixin 并传入 function
+
+}
+
+.btn-secondary {
+    @extend %btn; //继承
+    @include set-background(lighten($primary-color,10%));
+    //调用了mixin 并传入 function
+    
+}

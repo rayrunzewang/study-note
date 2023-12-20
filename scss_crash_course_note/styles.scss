@@ -1,0 +1,70 @@
+// $font-stack: Arial, Helvetica, sans-serif;
+// $light-color:#f4f4f4;
+// $primary-color:#0e6cff;
+// $secondery-color:#ff8700;
+// 
+// personal preference: 将 variables 放入 _config.scss，但不是必须的
+
+@import 'config';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: $light-color;
+}
+
+a {
+
+}
+
+.showcaser {
+    @include set-background($primary-color); //调用 mixin 并传入参数
+    height: 600px;
+
+    nav{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        ul {
+            display: flex;
+            list-style-type: none;
+           
+            li {
+                padding: 15px;
+            }
+            
+            a {
+                color: set-text-color($primary-color); //调用function，并传参
+            }
+            
+            a:hover {
+                color: $primary-color;
+            }
+        }
+    }
+
+    &-content { //.showcase-content
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 50%;
+        }
+
+        h1 {
+            
+        }
+    }
+}
+
+@import 'utilities';
+@import 'button';
+@import 'mobile';
+

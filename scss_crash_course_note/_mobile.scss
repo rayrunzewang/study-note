@@ -1,0 +1,15 @@
+// 可以用于 @media screen mobiles
+
+@media(max-width:700px) {
+    .showcase {
+        height:400px;
+
+        &-content {
+
+        }
+
+        img {
+            display: none;
+        }
+    }
+}
