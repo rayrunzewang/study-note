@@ -1272,7 +1272,37 @@ clearTimeout - 关闭延时调用
 */
 
 /* 
-134 - 135. 轮播图
+134 - 136. 轮播图
+*/
+
+/* 
+137. 类的操作
+一般使用js修改样式时，尽量避免js行为和css表现耦合
+尽量使用一行js代码修改多个css样式
+所以使用js修改元素的class属性，从而修改css
+浏览器只需要重新渲染页面一次，性能比较好
+而且这样行为和表现分离
+div.className += " class2"
+加之前应该判断是否已经有这个class 
+var className = "class2"
+var reg = new RegExp("\\b" + className "+\\b")
+
+能该类尽量改类，让js和css足够的分离
+*/
+
+/* 
+138 - 139. 二级菜单
+ */
+
+/* 
+140. JSON
+
+JSON只有两种：对象和数组
+值只能是：String, Number, Boolean, Null, Object, Array
+不能是Fuction和Undefined
+
+eval() 可以执行字符串形式的代码
+eval() 很强大，但在开发中尽量不要使用，首先他的执行性能比较差，然后他还具有安全隐患
 */
 
 /* 复习，总结此笔记并写成markdown, 不懂得视频再看一遍，可能要着重看100-115 DOM操作
@@ -1287,6 +1317,7 @@ clearTimeout - 关闭延时调用
  * dom中for循环的常用场景练习和记录？
  * css 实战常用方法/函数/框架/实用技巧/固定搭配练习和记录？
  * 50 个小练习？
+ * 把常用功能都写好并上传github
  * js红宝书
  * 聊一聊Cookies和Sessions有啥区别 https://www.xiaohongshu.com/explore/65858dd9000000000901c78d
  * 51道docker常见面试题【附答案 https://www.xiaohongshu.com/explore/6569937900000000060223c2
