@@ -1,6 +1,6 @@
 # 尚硅谷 js 高级技术
 > lecture 02
- ## 1.基础回顾
+## 1.基础回顾
 ### 1.1 数据类型
 数据看什么  
 1. 数据类型分类  
@@ -267,18 +267,22 @@ js 可以不用分号
 
 ### 2.1 原型与原型链
 
-原型
-1. 函数的prototype属性，显示原型（属性）
-    - 每个函数都有prototype属性，他默认指向一个Object空对象(即称为：原型对象)，所谓空对象是指没有我们的属性。
+#### 2.2.1 原型的概念
+1. 函数的 `prototype` 显示原型（属性）和 `[[proto]]` 隐式原型（属性）
+    - 每个函数都有`prototype`属性，他默认指向一个Object空对象(即称为：原型对象)，所谓空对象是指没有我们自己手动设置的的属性。
+    - 每个实例对象都有`[[proto]]`，称为隐式原型
+    - 对象的隐式原型的值为其对应的构造函数的显式原型的值
     - 原型对象中有一个属性constructor，他指向函数对象
 
-    构造函数Fn在创建实例对象fn时，写了一条语句
+    > 构造函数Fn在创建实例对象fn时，写了一条语句:
+    > ```js
+    > this.__proto__ = Fn.prototype;
+    > this.prototype = {}
+    > ```
+    
+    > Examples:
     ```js
-    this.__proto__ = Fn.prototype;
-    this.prototype = {}
-    ```
-    ```js
-    // 一些关键
+    // 一些 Examples
     console.log(Date.prototype.constructor === Date); //true
     console.log(fun.prototype.constructor === fun); //true
     console.log(Object.prototype.constructor === Object); //true
@@ -294,19 +298,26 @@ js 可以不用分号
     console.log(Object.getPrototypeOf(obj) === Object.prototype ); //true
     console.log(Object.getPrototypeOf(Object) === Object.prototype ); //false
     ```
+    > 构造函数和他的原型对象是相互引用
     ![构造函数和他的原型对象相互引用](./assets/images/image1.jpg '构造函数和他的原型对象相互引用')
-    也就是说构造函数和他的原型对象是相互引用
+    
+    > 总结：  
+    函数的 `prototype` 属性：在定义函数时自动添加，默认值是一个空对象  
+    函数的 `[[proto]]` 属性：创建对象时自动添加的，默认值为构造函数的 `prototype` 属性值  
+    程序员能直接操作显式原型，但不能直接操作隐式原型（ES6之前）
 2. 给原型对象添加属性（一般都是方法）
     - 作用：函数的左右实例对象自动拥有圆形中的属性（方法）
+3. 构造函数和Class里的构造器是一个作用，本质上构造函数和Class中的构造器都用于对象的初始化，它们在JavaScript中实现相同的目标。Class语法糖是在ES6中引入的，它提供了一种更清晰、更具面向对象特性的写法，但在底层实现上，它仍然依赖于构造函数的概念。
 
-显示原型（属性）与隐式原型（属性）  
+#### 2.2.2 显示原型（属性）与隐式原型（属性）  
 - 每个实例对象都有一个 [[proto]] 
 - 对象的隐式原型的值为其对应构造函数的显示原型的值  
 ![写原型与读原型](./assets/images/image2.jpg)
 写Function中的显示原型prototype，读fn的隐式原型[[proto]]，也就是__proto__
 
-原型链
 > Lecture 17 尚硅谷 JavaScript高级 原型链
+
+原型链  
 
 1. 原型链（图解）
     - 访问一个对象的属性时，
@@ -315,11 +326,8 @@ js 可以不用分号
         - 如果最终每找到，返回undefined
     - 别名：隐式原型链
     - 作用：查找对象的属性(方法)
-2. 构造函数/原型/实体对象的关系（图解）
-3. 构造函数/原型/实体对象的关系2（图解）
 
-
-在JavaScript中，Object.prototype 是所有对象的原型对象，而 Object.[[Prototype]]（通常通过 __proto__ 访问）是对象内部的一个属性，指向该对象的原型。这两者之间确实指向同一个对象，但是由于访问方式的不同，可能出现 Object.[[Prototype]] 不等于 Object.prototype 的情况。
+在JavaScript中，Object.prototype 是所有对象的原型对象，而 Object.[[Proto]]（通常通过 __proto__ 访问）是对象内部的一个属性，指向该对象的原型。这两者之间确实指向同一个对象，但是由于访问方式的不同，可能出现 Object.[[Proto]] 不等于 Object.prototype 的情况。
 
 下面是一个简单的例子，演示了这种情况：
 
@@ -331,9 +339,9 @@ console.log(obj.__proto__ === Object["prototype"]); // true
 
 console.log(Object.prototype === Object["prototype"]); // true
 ```
-在这个例子中，obj 是一个空对象。通过 __proto__ 或者 Object["prototype"] 都能访问到它的原型，而且它们指向同一个对象 Object.prototype。
+在这个例子中，obj 是一个空对象。通过 __proto__ 或者 Object["prototype"] 都能访问到它的原型，而且它们指向同一个对象 `Object.prototype`。
 
-不过，需要注意的是，__proto__ 是非标准的属性，虽然在很多现代浏览器中得到了支持，但不建议在生产代码中使用。更推荐使用 Object.getPrototypeOf() 方法来获取对象的原型。
+不过，需要注意的是，__proto__ 是非标准的属性，虽然在很多现代浏览器中得到了支持，但不建议在生产代码中使用。更推荐使用 `Object.getPrototypeOf()` 方法来获取对象的原型。
 
 ```js
 let obj = {};
@@ -341,13 +349,67 @@ let prototype = Object.getPrototypeOf(obj);
 
 console.log(prototype === Object.prototype); // true
 ```
-总的来说，虽然 Object.[[Prototype]] 和 Object.prototype 指向同一个对象，但是它们是通过不同的路径访问的，其中 Object.[[Prototype]] 是对象内部的属性，而 Object.prototype 是所有对象的原型对象。
+总的来说，虽然 Object.[[Proto]] 和 Object.prototype 指向同一个对象，但是它们是通过不同的路径访问的，其中 Object.[[Proto]] 是对象内部的属性，而 Object.prototype 是所有对象的原型对象。
 ![image3](./assets/images/image3.jpg)
-上图有一个小问题，fn和Fn都应该包含两种原型
+> 上图有一个小问题，fn和Fn都应该包含两种原型？因为构造函数也是Function的实例？所有函数都有两个属性，一个显式原型，一个隐式原型？
+
+构造函数/原型/实体对象的关系（图解）
 ![image4](./assets/images/image4.jpg)
 ![image5](./assets/images/image5.jpg)
+> 上面这个图很重要
+> 所有函数的`_proto_`都是一样的，因为都是来自于`new Function()`
+> `Object()` 也是函数实例，所以`_proto_`也是来自于`new Function()`
+
+
+> 需要搞明白的核心概念：实例 和 构造函数，对象 和 构造函数 和 实例，两种原型 之间的所有关系？！去console里试一试？！
+
+
+
+
+#### 2.2.3 原型链补充
 > lecture 18 js 高级 原型链 补充
-1. 函数的显示原型指向的对象：默认是空的Object实例对象（但Object不满足）
+
+1. 函数的显式原型指向的对象：默认是空的Object实例对象，但是：
+    - Object() 实例/构造函数 比较特殊，其_proto_ 为 null
+    ```js
+    console.log(Fn.prototype instanceOf Object) // true
+    console.log(Object.prototype instanceOf Object) // false
+    console.log(Function.prototype instanceOf Object) // true
+    ```
+2. Function 是谁的实例
+    - 所有函数都是Function的实例，没有例外，包括他本身
+    ```js
+    console.log(Function._proto===Function.prototype) // true
+    ```
+3. Object原型对象是原型链的尽头
+    ```js
+    console.log(Object.prototype._proto_) // null
+    ```
+
+> Object 原型与实例与 Class/或构造函数 有关吗？
+
+
+#### 原型链的属性问题
+> lecture 19 原型链 属性问题
+
+- prototype上可以加属性
+    - 但我们一般不往原型链上添加属性，属性一般通过构造函数的this添加到对象实例自身身上
+    - 而方法一般添加到原型链上
+
+#### 探索 instanceOf
+> lecture 20 探索 instanceOf
+- instanceOf是如何判断的
+    - 表达式：`A(实例对象) instanceOf B(构造函数)`，A拥有隐式原型属性，而B拥有显式原型属性
+    - 如果B函数的显式原型对象在A对象的原型链上，返回true，否则返回false
+```js
+console.log(Object instanceOf Function) // true
+console.log(Object instanceOf Object) // true
+console.log(Function instanceOf Function) // true
+console.log(Function instanceOf Object) // true
+
+function Foo(){}
+console.log(Object instanceOf Foo) // false
+```
 ### 2.2 执行上下文与执行上下文栈
 ### 2.3 作用域与作用域链
 ### 2.4 闭包

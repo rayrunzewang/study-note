@@ -82,3 +82,6 @@ Summary:
 - Axios 是一个基于 Promise 的 HTTP 客户端，可以用于浏览器和 Node.js。它对 XMLHttpRequest 和 Fetch API 进行了封装，提供了更简单和易用的接口。
 - Axios 具有一些额外的功能，例如自动转换 JSON 数据、拦截请求和响应等，使其更灵活和强大。
 
+补充note 因为有些可能没有记录下来：
+https://www.youtube.com/watch?v=WXsD0ZgxjRw&t=2182s
+https://www.youtube.com/watch?v=Oive66jrwBs
