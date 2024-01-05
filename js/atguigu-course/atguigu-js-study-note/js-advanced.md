@@ -410,6 +410,11 @@ console.log(Function instanceOf Object) // true
 function Foo(){}
 console.log(Object instanceOf Foo) // false
 ```
+- 最完整的图
+![js_proto](./assets/images/js_proto.jpg)
+
+> lecture 21  
+https://www.youtube.com/watch?v=fb5b2_2vCSw&list=PLmOn9nNkQxJH3g-GPoyAj2IB6bQ-qOeKl&index=21
 ### 2.2 执行上下文与执行上下文栈
 ### 2.3 作用域与作用域链
 ### 2.4 闭包
