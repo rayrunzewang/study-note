@@ -129,6 +129,118 @@ const hanleClick = (name, e{/* 注意参数顺序 */}) => {
     )
   }
   ```
+### useState
+useState 是一个函数，允许我们向组件添加一个状态变量
+```jsx
+const [count, setCount] = useState(0)
+```
+```jsx
+//点击加一的按钮
+import {usState} from React;
+function App() {
+const [count, setCount] = useState(0); // useState()返回的是一个数组，所以使用解构赋值法
+  handleClick = () => {
+  setCount(count + 1)
+  }
+  return (
+    <div>
+    <button onClick={handleClick}>{count}</button>
+    </div>
+  )
+}
+```
+#### 状态不可变规则
+改变状态不能使用再次赋值
+#### 修改对象状态
+规则：对于对象类型的状态变量，应该始终传给set方法一个全新的对象来进行修改
+```jsx
+import {useState} from react;
+function App() {
+  const [form, setForm] = useState({name: 'jack'})
 
-[next](https://www.youtube.com/watch?v=AE4N6dgzQkI&list=PLFbd8KZNbe-_cp9SRCpEBnBzZoBYl4fIR&index=11)
+  const changeForm = () => {
+    setForm({
+      ...form, // 展开字符串
+      name: 'Peter'
+    })
+  }
+
+  return(
+    <div>
+      <button onClick = {changeForm}>修改form{form.name}</button>
+    </div>
+  )
+}
+
+// 拓展：数组和对象是一样的
+```
+### React中的样式
+样式插入
+  - 行内样式（不推荐）
+  - class类名控制
+```jsx
+// 行内样式 1
+function App() {
+
+  return (
+    <div> {/* style 是一个对象格式 */}
+      <span style={{color: 'blue', fontSize:'50px'}}>span</span>
+    </div>
+  )
+}
+
+expert default App;
+
+// 行内样式 2
+
+function App() {
+
+  {/* style 是一个对象格式 */}
+  style = {
+    color: 'blue', 
+    fontSize:'50px'
+    }
+
+  return (
+    <div>
+      <span style={style}>span</span>
+    </div>
+  )
+}
+
+expert default App;
+```
+class类名控制：
+```jsx
+import './index.css'
+
+function App() {
+
+  return(
+    <div>
+      <span className="foo">span</span>
+    </div>
+  )
+}
+```
+```css
+ .foo {
+  color: blue;
+  fontSize: 50px;
+ }
+
+```
+### B站案例
+重点：
+1. 可以使用useState方法更改数组
+    ```jsx
+    const [commentList, setCommentList] = useState(arr)
+    ```
+2. 用map渲染li，不要忘了key
+3. 条件渲染，比如只有自己的评论才显示删除按钮
+4. 删除功能的逻辑是通用的，即拿到id，并以id为条件对评论列表进行处理
+5. 事件传参记得使用箭头函数
+
+而是使用setState方法，这样才能渲染页面
+[next](https://www.youtube.com/watch?v=yho_la7_20g&list=PLFbd8KZNbe-_cp9SRCpEBnBzZoBYl4fIR&index=16)
 

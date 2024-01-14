@@ -389,14 +389,14 @@ console.log(prototype === Object.prototype); // true
 > Object 原型与实例与 Class/或构造函数 有关吗？
 
 
-#### 原型链的属性问题
+#### 2.2.4 原型链的属性问题
 > lecture 19 原型链 属性问题
 
 - prototype上可以加属性
     - 但我们一般不往原型链上添加属性，属性一般通过构造函数的this添加到对象实例自身身上
     - 而方法一般添加到原型链上
 
-#### 探索 instanceOf
+#### 2.2.5 探索 instanceOf
 > lecture 20 探索 instanceOf
 - instanceOf是如何判断的
     - 表达式：`A(实例对象) instanceOf B(构造函数)`，A拥有隐式原型属性，而B拥有显式原型属性
@@ -412,12 +412,364 @@ console.log(Object instanceOf Foo) // false
 ```
 - 最完整的图
 ![js_proto](./assets/images/js_proto.jpg)
-
+#### 2.2.6 原型 面试题
 > lecture 21  
-https://www.youtube.com/watch?v=fb5b2_2vCSw&list=PLmOn9nNkQxJH3g-GPoyAj2IB6bQ-qOeKl&index=21
-### 2.2 执行上下文与执行上下文栈
+```js
+function F(){}
+
+    console.log(typeof F);
+    //-> function
+
+    console.log(F instanceof Function);
+    //-> true
+
+const f = new F()
+
+    console.log(typeof f);
+    //-> object
+    console.log(f instanceof Function);
+    //-> false
+    console.log(f instanceof Object);
+    //-> true
+    console.log(f instanceof F);
+    //-> true
+```
+### 2.2 变量提升 与 函数提升
+```js
+fun1() // 可以执行，因为函数提升
+function fun1(){}
+
+fun2() // undefined, 因为变量提升了但是赋值没有提升
+var fun2 = function(){}
+```
+资料补充：
+> 说起构造函数，这里补充一点相关概念，函数是一种特殊的对象，含有internal method [[Call]],因此可以通过函数调用来执行相关代码，而构造函数又是一种特殊的函数，含有internal method [[Construct]],可以通过new或super调用创建对象。
+> 链接：https://juejin.cn/post/6932852475527430157
+> 来源：稀土掘金
+
+> 在js中所有函数都是Function的实例，包括Object和Function本身,乃至各种内置构造函数（比如Array）,因此有
+```js
+Function.__proto__===Function.prototype//true
+Function.prototype.__proto__===Object.prototype//true,即Function instanceof Object
+//原型链 Function=>Function.prototype=>Object.prototype,以下类似
+
+Object.__proto__===Function.prototype//true，即Object instanceof Function
+Array.__proto__===Function.prototype //true
+
+function a(){}
+a.__proto__===Function.prototype//true
+
+// 作者：卖油条的
+// 链接：https://juejin.cn/post/6932852475527430157
+```
+> FP 与 OOP 的总结，值得一看 https://juejin.cn/post/6932852475527430157
+### 2.3 执行上下文与执行上下文栈
+#### 2.3.1 执行上下文
+
+- 代码分类
+    - 全局代码
+    - 局部代码
+- 全局执行上下文
+    1. 再执行之前，将window确定为全局执行上下文
+    2. 对全局数据进行处理
+        - var 定义的全局变量 -> undefined，添加为window的属性
+        - function 声明的函数 -> 添加为window的方法
+        - this -> 赋值给window
+    3. 开始执行全局代码
+- 函数执行上下文
+```js
+function fn (a1) {
+    //可以访问什么：
+    console.log(a1); //2
+    console.log(a2); //undefined
+    a3(); // 执行a3
+    console.log(this); //window, 
+    console.log(arguments); //在执行函数fn2(2,3)时，显式：类/伪数组 2, 3
+    //------------
+
+    var a2 = 3;
+    function a3 () {
+    }
+}
+
+fn(2, 3)
+```
+1. 再调用函数，准备执行函数体之前，创建对应的函数执行上下文对象（这里的对象不是一个真实的对象，是一个虚拟的对象，可以当作对象来理解。他是栈中的一个封闭的函数执行空间，可以获取全局变量但是对其他空间是封闭的。当这个函数执行外时，去执行外部代码时，这个函数空间就不存在了）
+2. 对局部数据进行预处理
+    - 形参变量 -> 赋值（实参） -> 添加为执行上下文的属性
+    - arguments -> 赋值（实参列表），添加为执行上下位的属性
+    - var定义的局部变量 -> undefined，添加为执行上下文的属性
+    - function声明的函数 -> 赋值（fun），添加为执行上下文的方法
+    this -> 赋值（调用函数的对象）
+3. 开始执行函数体代码
+> 调用函数的时候才会分配空间并开始预处理和执行
+> 不调用函数不会分配空间
+#### 2.3.2 执行上下文栈
+```js
+var a = 10
+var bar = function (x) {
+    var b =5
+    foo(x + b)
+}
+var foo = function (y) {
+    var c = 5
+    console.log(a + c + y)
+}
+bar(10)
+// 这个函数执行没有问题，因为当执行到 bar(10) 的时候已经执行到 foo 了，所以 bar 中的 foo 可以执行
+// 一定要把预处理和执行分开考虑
+
+```
+
+队列：先进先出
+栈（调用栈）：后进先出
+
+> 调用栈 [模拟工具](http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!)
+
+> lecture 25 面试题
+```js
+function a() {}
+var a
+console.log(typeof a) // function 
+
+// 先执行变量提升，再执行函数提升
+```
+```js
+if(!(b in window)){
+    var b = 1
+}
+console.log(b) // undefined 
+```
+```js
+var c = 1
+function c (c) {
+    console.log(c) 
+    var c = 3;
+}
+c(2) // 报错，c不是函数
+```
+> Lecture 26 复习
+构造函数在构造新函数的时候写了一条语句
+构造函数创建了一个object空对象{}
+把这个空对象{}赋值为this
+然后使用 this 赋值 this.属性 = 属性
+使用 prototype.方法 = 方法，用于继承
+
+
+在JavaScript中，当你使用 new 关键字调用构造函数时，构造函数的实例会继承构造函数的原型对象。这种关系是通过 JavaScript 的原型继承机制来建立的。让我详细解释一下：
+
+- 创建新对象：使用 new 关键字创建一个新的空对象。
+
+- 将 this 绑定到新对象：构造函数内部的 this 关键字被绑定到新创建的对象上，以便在构造函数内访问和修改新对象的属性。
+
+- 建立 [[Prototype]] 链接：这是关键步骤。新对象的 [[Prototype]] 属性被设置为构造函数的 prototype 属性的引用。这样，新对象就通过原型链与构造函数的原型对象连接起来。
+
+- 执行构造函数内部的代码：构造函数内部的代码被执行，可以在其中对新对象进行初始化操作，给它添加属性和方法等。
+
+- 隐式返回新对象：如果构造函数内部没有显式返回一个对象，那么 new 关键字会隐式返回新创建的对象。
+
+关于 显式原型 和 隐式原型 之间的关系
+- 当你使用 new 关键字调用构造函数时，JavaScript 引擎会执行以下步骤：
+- 创建一个新的空对象：使用 Object.create(null) 创建一个新的对象，它的 [[Prototype]] 属性指向 null。
+
+- 将构造函数的 prototype 属性赋给新对象的 [[Prototype]]：新创建的对象的 [[Prototype]] 属性被设置为构造函数的 prototype 属性的引用。
+```js
+function createObject(constructor) {
+    // 1. 创建新的空对象
+    var obj = Object.create(null);
+
+    // 2. 将构造函数的 prototype 赋给新对象的 [[Prototype]]
+    obj.__proto__ = constructor.prototype;
+
+    // 返回新对象
+    return obj;
+}
+
+// 使用 createObject 模拟 new 关键字的行为
+var newObj = createObject(MyConstructor);
+```
+在现代 JavaScript 中，推荐使用 Object.create() 来显式设置对象的 [[Prototype]]。上述示例中的 __proto__ 是非标准的属性，实际应用中应该使用 Object.create() 方法，如下所示：
+```js
+function createObject(constructor) {
+    return Object.create(constructor.prototype);
+}
+
+// 使用 createObject 模拟 new 关键字的行为
+var newObj = createObject(MyConstructor);
+```
+这样，新对象就与构造函数的原型对象建立了链接，形成了原型链，使得实例可以访问构造函数原型上定义的属性和方法。
+
+在JavaScript中，构造函数的 prototype 属性是一个对象，它是新实例的原型。默认情况下，这个对象包含一个 constructor 属性，指向构造函数本身。构造函数的 prototype 对象也会自动获得一个 [[Prototype]]，指向 Object.prototype。这就形成了原型链。
+
+构造函数的 prototype 对象的默认属性：
+
+constructor: 指向构造函数本身。
+[[Prototype]]: 指向 Object.prototype。
+
+构造函数本身没有 prototype 属性，它是构造函数的一个特殊属性，用于定义新对象的原型。而构造函数本身有一个 [[Prototype]]，通常指向 Function.prototype。
+
+总结一下：
+
+构造函数的 prototype 对象：
+
+constructor: 指向构造函数本身。
+[[Prototype]]: 指向 Object.prototype。
+构造函数本身：
+
+[[Prototype]]: 指向 Function.prototype。
+
+执行上下文：
+1. 确定执行上下文 举例:window
+2. 预处理
+    1. 收集 var 的变量
+    2. 收集用function定义的函数
+    3. this = window
+3. 执行上下文
+
+执行上下文：
+1. 创建函数执行上下文 
+2. 预处理
+    1. 收集数据：形参：赋值，赋实参的值 用var定义的局部的变量:undefined
+    2. 收集用function定义的函数
+    3. this = 调用函数的对象
+    4. argument：有值：实参列表
+3. 执行上下文
 ### 2.3 作用域与作用域链
+> Lecture 27 作用域与作用域链
+> lecture 28 尚硅谷 JavaScript高级 作用域 面试题 
+
+```js
+var x = 10;
+function fn() {
+    console.log(x);
+}
+function show(f) {
+    var x = 20;
+    f();
+}
+show(fn); // 10
+// fn的作用域写的时候就确定了
+```
 ### 2.4 闭包
-  
+如何形成闭包
+1. 函数嵌套
+2. 内部函数引用外部函数变量
+3. 执行外部函数
+lecture 30 再看一遍 什么是闭包？
+> lecture 31 常见的闭包
+闭包:
+- 一个执行完毕的闭包在概念上仍然存在其执行上下文和词法作用域，尽管它的代码已经执行完毕。这是因为闭包是在函数创建的时候就捕获了其所在的词法作用域，而不是在函数执行的时候。当一个函数（形成闭包的外部函数）执行完成后，其执行上下文会被销毁，但由于闭包内部函数仍然引用了外部函数的变量，JavaScript引擎会维持这个词法作用域的引用，以便内部函数能够继续访问外部函数的变量。
+
+- 闭包并不会永远存在。它们的生命周期取决于内部函数是否仍然被引用。如果内部函数被引用，闭包就会一直存在，相关的词法作用域和执行上下文就会被保留，否则在不再被引用时可能会被垃圾回收。
+
+- 对一个函数的不同的引用会创建不同的闭包，其内部的变量互相独立
+
+- 闭包的生命周期
+    - 产生：在嵌套内部函数定义执行完时就产生了（不是在调用）
+    - 死亡：引用消失时
+
+- 考虑下面的例子：
+
+    ```javascript
+    function outerFunction() {
+    let outerVariable = "I am from outer function";
+
+    function innerFunction() {
+        console.log(outerVariable);
+    }
+
+    return innerFunction;
+    }
+
+    // 创建闭包
+    const closure = outerFunction();
+
+    // closure 仍然保持对 innerFunction 的引用
+    // 所以闭包不会被销毁
+    closure(); // 输出: "I am from outer function"
+    ```
+
+
+    ```javascript
+    // 不再引用 innerFunction
+    // 可能触发垃圾回收
+    closure = null;
+    ```
+- 闭包的应用
+    - 定义js模块
+        - 具有特定功能的js文件
+        - 将所有数据和功能都封装在一个函数内部（私有的）
+        - 只想外包楼一个包信n各方法的对象或函数
+        - 模块的使用者，只需要通过模块暴露的对象调用方法来实现对应的功能
+- 闭包的模块对外暴露的方法
+    - 通过return对象暴露所有函数
+    - 通过给window设置方法暴露所有函数 - 更简洁
+- 闭包的缺点
+    - 一直有引用，所以占用内存，容易造成内存泄漏，用完之后可以把 f() = null;，让内部函数成为垃圾对象
+- 内存溢出
+    - 一种程序运行出现的错误
+    - 当程序运行需要的内存超过了剩余的内存时，就抛出内存溢出的错误
+- 内存泄漏
+    - 占用的内存没有及时释放
+    - 内存泄漏积累多了就容易导致内存溢出
+    - 常见的内存泄漏
+        - 意外的全局变量
+            ```js
+            function fn() {
+                a = 3;
+                console.log(a);
+            }
+            fn()
+            ```
+        - 没有及时清理的计时器或回调函数
+        - 闭包
+- this 有可能是变化的，比如对象内的闭包内部函数被返回再执行就被window调用
+    - 这时候可以将对象内this保存给that，将this固定在对象内，使用that调用this
+
+
+ 
 ## 面向对象高级
+### 对象创建模式
+lecture 37
+- 工厂模式
+    - 返回一个对象的函数，都可以成为工厂函数
+        ```js
+        function cretePerson(name, age){
+            let obj = {
+                name: name,
+                age: age,
+                setName: function(name){
+                    this.name = name;
+                }
+            }
+
+            return obj;
+        }
+        ```
+    - 缺点： 无法区别具体类型，都是Object
+- 构造函数
+    ```js
+    function Person(name, age) {
+        this.name = name;
+        this.age = age;
+        this.setName = function(name) {
+            this.name = name
+        }
+    }
+    ```
+    - 优点：可以定义具体的类型
+    - 缺点：方法放在对象里，没有放在对象的原型对象上，浪费内存空间
+        ```js
+        // 解决方法
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+        }
+        
+        Person.prototype.setName = function(name) {
+            this.name = name
+        }
+        ```
+- 类
+
 ## 线程机制与事件机制
