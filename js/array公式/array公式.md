@@ -1,4 +1,23 @@
-好的，以下是每个方法的代码示例：
+# Array公式总结：
+
+## 公式大全
+
+filter() - 回调
+map() - 回调
+reduce() - 回调
+
+forEach() - 回调
+
+find()
+indexOf()
+lastIndexOf()
+includes() 
+
+some() - 回调
+every() - 回调
+includes() 
+
+## 举例和解释
 
 1. **`map()` 方法：**
     - 自定义函数处理每个元素，并返回一个新数组，
@@ -57,7 +76,16 @@
     const negativeNumbers = allNumbers.filter(num => num < 0);
     ```
 
-3. **`reduce()` 方法：**
+3. **`reduce(callback[, initialValue])` 方法：**
+- `Array.reduce()` 是数组方法之一，用于对数组中的每个元素执行一个提供的回调函数，并返回单个值作为结果。
+- 它提供了一种累积数组元素的方式，最终得到一个值。
+  - `callback`: 必需，是一个用于执行每个数组元素的函数，包含四个参数：
+    - `accumulator`：累加器，累积回调函数的返回值。它是上一次调用回调时的累积结果，或者是初始值（如果提供了初始值）。
+    - `currentValue`：当前处理的数组元素。
+    - `currentIndex`：当前处理的数组元素的索引。
+    - `array`：调用 `reduce` 的数组。
+  - `initialValue`: 可选，用作第一次调用回调函数时的第一个参数的值。如果未提供初始值，`reduce` 会从索引 0 的地方开始执行回调。如果提供了初始值，`reduce` 会从索引提供的初始值的地方开始执行回调。
+
    ```javascript
    const numbers = [1, 2, 3, 4, 5];
 
@@ -197,6 +225,8 @@
     ```
 
 8. **`indexOf()` 方法：**
+- `Array.indexOf()` 不会修改原始数，element: 要查找的元素，如果找到元素，返回第一个匹配项的索引。如果数组中不存在该元素，返回 -1。
+- `Array.lastIndexOf()` 不会修改原始数，element: 要查找的元素，如果找到元素，返回最后一个匹配项的索引。如果数组中不存在该元素，返回 -1。
    ```javascript
    const numbers = [1, 2, 3, 4, 5];
 
@@ -218,6 +248,7 @@
    ```
 
 9. **`includes()` 方法：**
+- includes() 不修改原数组，用于判断数组中是否包含指定的元素，返回一个布尔值 true or false。
    ```javascript
    const numbers = [1, 2, 3, 4, 5];
 
@@ -241,6 +272,7 @@
    ```
 
 10. **`slice()` 方法：**
+- `Array.slice`([start[, end]])方法用于从数组中提取部分元素，并返回一个新数组，而不修改原始数组
     ```javascript
     const numbers = [1, 2, 3, 4, 5];
 
@@ -259,3 +291,33 @@
     // 复制数组，但排除特定元素
     const withoutTwo = numbers.slice(0, 1).concat(numbers.slice(2));
     ```
+
+- `Array.toString()` - 不会修改原始数组。返回字符串。
+- `Array.join(', ')` - 不会修改原始数组。返回字符串。
+- `Array.concat([array1], [array2]...[arrayN])` - 不会修改原始数组。是数组的连接方法，它会返回一个新数组组合。
+- `Array.splice(start[, deleteCount[, item1[, item2[, ...]]]])` - 修改原数组(not a good idea)，并返回一个包含被删除元素的新数组。
+  -  generally create copy of the array and work on the copy. `let namesCopy = [...names];`
+- `Array.flat(depth)`
+- `Array.sort([compareFunction])`修改原数组（就地排序），并返回排序后的数组。如果不提供 compareFunction，则按照 Unicode 顺序进行排序。
+
+- `Array.unshift(element1, ..., elementN)`：
+修改原数组，将一个或多个元素添加到数组的开头，并返回数组的新长度。
+```javascript
+const numbers = [3, 4, 5];
+const newLength = numbers.unshift(1, 2); // 返回 5，数组变为 [1, 2, 3, 4, 5]
+```
+- `Array.shift()`：
+修改原数组，删除数组的第一个元素，并返回该元素的值。
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const firstElement = numbers.shift(); // 返回 1，数组变为 [2, 3, 4, 5]
+```
+- `Array.reverse()`：
+修改原数组，颠倒数组中元素的顺序，并返回颠倒后的数组。
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const reversedArray = numbers.reverse(); // 返回 [5, 4, 3, 2, 1]
+```
+
+push 修改原数组
+pop 修改原数组
